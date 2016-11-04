@@ -19,7 +19,7 @@ import java.util.Map;
 public class TestImportMap {
   @SuppressWarnings("rawtypes")
   public static void main(String[] args) throws FileNotFoundException {
-    File f=new File("/Users/SagerasWang/Desktop/test.xls");
+    File f=new File("d:/sss.xls");
     InputStream inputStream= new FileInputStream(f);
     
     ExcelLogs logs =new ExcelLogs();

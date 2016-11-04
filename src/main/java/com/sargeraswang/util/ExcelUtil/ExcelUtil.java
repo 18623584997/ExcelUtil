@@ -123,8 +123,8 @@ public class ExcelUtil {
      *                javabean属性的数据类型有基本数据类型及String,Date,String[],Double[]
      * @param out     与输出设备关联的流对象，可以将EXCEL文档导出到本地文件或者网络中
      */
-    public static <T> void exportExcel(String[] headers, Collection<T> dataset, OutputStream out) {
-        exportExcel(headers, dataset, out, null);
+    public static <T> void exportExcel(String[] headers, Collection<T> dataset, OutputStream out,BaseCellStyle style) {
+        exportExcel(headers, dataset, out, null,style);
     }
 
     /**
@@ -139,13 +139,13 @@ public class ExcelUtil {
      * @param pattern 如果有时间数据，设定输出格式。默认为"yyy-MM-dd"
      */
     public static <T> void exportExcel(String[] headers, Collection<T> dataset, OutputStream out,
-                                       String pattern) {
+                                       String pattern,BaseCellStyle style) {
         // 声明一个工作薄
         HSSFWorkbook workbook = new HSSFWorkbook();
         // 生成一个表格
         HSSFSheet sheet = workbook.createSheet();
 
-        write2Sheet(sheet, headers, dataset, pattern);
+        write2Sheet(sheet, headers, dataset, pattern,style,workbook);
         try {
             workbook.write(out);
         } catch (IOException e) {
@@ -194,8 +194,8 @@ public class ExcelUtil {
      * @param sheets {@link ExcelSheet}的集合
      * @param out    与输出设备关联的流对象，可以将EXCEL文档导出到本地文件或者网络中
      */
-    public static <T> void exportExcel(List<ExcelSheet<T>> sheets, OutputStream out) {
-        exportExcel(sheets, out, null);
+    public static <T> void exportExcel(List<ExcelSheet<T>> sheets, OutputStream out,BaseCellStyle style) {
+        exportExcel(sheets, out, null,style);
     }
 
     /**
@@ -207,7 +207,7 @@ public class ExcelUtil {
      * @param out     与输出设备关联的流对象，可以将EXCEL文档导出到本地文件或者网络中
      * @param pattern 如果有时间数据，设定输出格式。默认为"yyy-MM-dd"
      */
-    public static <T> void exportExcel(List<ExcelSheet<T>> sheets, OutputStream out, String pattern) {
+    public static <T> void exportExcel(List<ExcelSheet<T>> sheets, OutputStream out, String pattern,BaseCellStyle style) {
         if (CollectionUtils.isEmpty(sheets)) {
             return;
         }
@@ -216,7 +216,7 @@ public class ExcelUtil {
         for (ExcelSheet<T> sheet : sheets) {
             // 生成一个表格
             HSSFSheet hssfSheet = workbook.createSheet(sheet.getSheetName());
-            write2Sheet(hssfSheet, sheet.getHeaders(), sheet.getDataset(), pattern);
+            write2Sheet(hssfSheet, sheet.getHeaders(), sheet.getDataset(), pattern,style,workbook);
         }
         try {
             workbook.write(out);
@@ -234,13 +234,14 @@ public class ExcelUtil {
      * @param pattern 日期格式
      */
     private static <T> void write2Sheet(HSSFSheet sheet, String[] headers, Collection<T> dataset,
-                                        String pattern) {
+                                        String pattern,BaseCellStyle style,HSSFWorkbook workbook) {
         // 产生表格标题行
         HSSFRow row = sheet.createRow(0);
         for (int i = 0; i < headers.length; i++) {
             HSSFCell cell = row.createCell(i);
             HSSFRichTextString text = new HSSFRichTextString(headers[i]);
             cell.setCellValue(text);
+            style.setCellStyle(cell,workbook);
         }
 
         // 遍历集合数据，产生数据行

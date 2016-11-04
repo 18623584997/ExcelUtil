@@ -32,7 +32,7 @@ public class TestExportMap {
     
     File f= new File("/Users/SagerasWang/Desktop/test.xls");
     OutputStream out = new FileOutputStream(f);
-    ExcelUtil.exportExcel(new String[]{"name","age"},list, out );
+    ExcelUtil.exportExcel(new String[]{"name","age"},list, out,new CellStyle() );
     out.close();
   }
 }
